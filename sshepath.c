@@ -13,7 +13,6 @@ void cmd_line_execution (char *cmd_line_args)
 {
 	char *tokenized_path;
 	char complete_path[MAX_LENGTH];
-	//typedef check checkbuf;
 
 	if (check(cmd_line_args, &checkbuf) == 0)
 	{
@@ -30,7 +29,7 @@ void cmd_line_execution (char *cmd_line_args)
 	}
 	tokenized_path = strtok(getenv("PATH"), ":");
 	
-	for (char *tokenized_path = strtok(path, "/"); tokenized_path; tokenized_path = strtok(NULL, "/"))
+	for (tokenized_path = strtok(path, "/"); tokenized_path; tokenized_path = strtok(NULL, "/"))
 	{
 		strcpy(complete_path, tokenized_path);
 		strcat(complete_path, "/");
@@ -51,6 +50,6 @@ void cmd_line_execution (char *cmd_line_args)
 	}
 	tokenized_path = strtok(NULL, ":");
 }
-printf("cmd_line_args '%s' not available\n", cmd_line_args);
-return (1);
+	printf("cmd_line_args %s not available\n", cmd_line_args);
+	return (1);
 }

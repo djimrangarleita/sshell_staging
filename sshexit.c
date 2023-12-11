@@ -6,6 +6,11 @@ void simple_exit()
 {
 	char *cmd_line_args[1024];
 	char input_commands[256];
+	int argc = 0;
+	char command[256] = " ";
+	char *token;
+	int exit_status = system(command);
+	int i;
 
 	for (;;)
 	{
@@ -17,8 +22,8 @@ void simple_exit()
 		{
 			continue;
 		}
-		int argc = 0;
-		for (char *token = strtok(input_commands, " \n"); token; token = strtok(NULL, " \n")) 
+		//int argc = 0;
+		for (token = strtok(input_commands, " \n"); token; token = strtok(NULL, " \n")) 
 		{
 			cmd_line_args[argc++] = token;
 		}
@@ -35,14 +40,14 @@ void simple_exit()
 		}
 		else
 		{
-			char command[256] = "";
-		       for (int i = 0; i <argc; i++)
+			//char command[256] = "";
+		       for (i = 0; i <argc; i++)
 		       {
 				strcat(command, cmd_line_args[i]);
 				 strcat(command, " ");
 				 }
 
-			int exit_status = system(command);
+		//	int exit_status = system(command);
 			if (exit_status != 0) 
 			{
 				printf("Error: command \"%s\" failed with exitcode  %d\n", cmd_line_args, exit_status);
@@ -51,3 +56,9 @@ void simple_exit()
 	}
 	return (0);
 }
+int main()
+{
+	simple_exit();
+	return (0);
+}
+
