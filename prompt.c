@@ -5,10 +5,13 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
+extern char **environ;
+
 char **_strtok(char *str, char **toks, char *delim, char **envp);
 int execcmd(char **tokens);
 void free_toks(char **tokens);
 char *findxpath(char **envp, char *input);
+void printenvs();
 
 int main(int ac, char *argv[], char **envp)
 {
@@ -17,7 +20,6 @@ int main(int ac, char *argv[], char **envp)
 	ssize_t rchars;
 	char *toks[32];
 	int execres;
-	char *args[] = {"ls", "-l", NULL};
 
 	pid_t child_pid;
 
@@ -46,8 +48,13 @@ int main(int ac, char *argv[], char **envp)
 		else if (rchars != -1 && line[0] != '\n')
 		{
 			_strtok(line, toks, " \t\n", envp);
-			
-			if (toks[0][0] != '/')
+
+			// check for all built-ins instead
+			if (strcmp(toks[0], "env") == 0)
+			{
+				printenvs();
+			}
+			else if (toks[0][0] != '/')
 			{
 				execres = execcmd(toks);
 				dprintf(STDERR_FILENO, "%s: ", argv[0]);
@@ -91,6 +98,10 @@ char **_strtok(char *str, char **toks, char *delim, char **envp)
 		i++;
 	}
 	toks[i] = NULL;
+	if (strcmp(toks[0], "env") == 0)
+	{
+		return (toks);
+	}
 	toks[0] = findxpath(envp, toks[0]);
 	
 	return (toks);
@@ -149,4 +160,15 @@ char *findxpath(char **envp, char *input)
 	}
 
 	return (input);
+}
+
+void printenvs()
+{
+	int i;
+
+	i = 0;
+	while (environ[i] != NULL)
+	{
+		printf("%s\n", environ[i++]);
+	}
 }
