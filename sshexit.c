@@ -1,15 +1,17 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 /****/
 void simple_exit() 
 {
 	char *cmd_line_args[1024];
+	char *argv[1024];
 	char input_commands[256];
 	int argc = 0;
 	char command[256] = " ";
 	char *token;
-	int exit_status = system(command);
+	int exit_status;
 	int i;
 
 	for (;;)
@@ -29,8 +31,18 @@ void simple_exit()
 		}
 		if (strcmp(cmd_line_args[0], "exit") == 0) 
 		{
-			exit(0);
+			if (argc >1) 
+			{
+				exit_status = atoi(cmd_line_args[1]);
+				printf("Exiting with status: %d\n", exit_status);
+				exit(exit_status);
+			}
+			else 
+			{
+				printf("Usage: exit status \n");
+			}
 		}
+
 		else if (strcmp(cmd_line_args[0], "cd") == 0)
 		{
 			if (argc > 1 && chdir(cmd_line_args[1]) != 0)
@@ -40,6 +52,7 @@ void simple_exit()
 		}
 		else
 		{
+			memset(command, 0 ,sizeof(command));
 			//char command[256] = "";
 		       for (i = 0; i <argc; i++)
 		       {
@@ -47,14 +60,14 @@ void simple_exit()
 				 strcat(command, " ");
 				 }
 
-		//	int exit_status = system(command);
+			int exit_status = system(command);
 			if (exit_status != 0) 
 			{
-				printf("Error: command \"%s\" failed with exitcode  %d\n", cmd_line_args, exit_status);
+				printf("Error: command \"%s\" failed with exitcode  %d\n",(char *) cmd_line_args, exit_status);
 			}
 		}
 	}
-	return (0);
+	//return (0);
 }
 int main()
 {

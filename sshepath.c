@@ -2,23 +2,25 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/wait>
+#include <sys/wait.h>
+#include <sys/stat.h>
 /****/
 
 #define MAX_LENGTH 1024
 
-typedef check checkbuf;
 
-void cmd_line_execution (char *cmd_line_args)
+
+void cmd_line_execution (char **cmd_line_args)
 {
 	char *tokenized_path;
 	char complete_path[MAX_LENGTH];
+	struct stat statbuffer;
 
-	if (check(cmd_line_args, &checkbuf) == 0)
+	if (stat(cmd_line_args, &statbuffer) == 0)
 	{
 		if (fork() == 0) 
 		{
-			execvp(cmd_line_args, NULL);
+			execv(cmd_line_args[0], cmd_line_args,  NULL);
 			exit(1);
 		}
 		else
@@ -35,11 +37,11 @@ void cmd_line_execution (char *cmd_line_args)
 		strcat(complete_path, "/");
 		strcat(complete_path, cmd_line_args);
 	}
-	if (check(complete_path, &checkbuf) == 0)
+	if (stat(complete_path, &statbuffer) == 0)
 	{
 		if (fork() == 0)
 		{
-			execv(complete_path, NULL);
+			execvp(complete_path, NULL);
 			exit(1);
 		}
 		else
@@ -50,6 +52,14 @@ void cmd_line_execution (char *cmd_line_args)
 	}
 	tokenized_path = strtok(NULL, ":");
 }
-	printf("cmd_line_args %s not available\n", cmd_line_args);
+	printf("cmd_line_args %s not available\n", (char *) cmd_line_args);
 	return (1);
+	}
 }
+
+int main(void)
+{
+	char **argv[] = {"/bin/ls", "-l", "/usr/", NULL};
+	cmd_line_execution (char **argv[]);
+	return (0);
+
